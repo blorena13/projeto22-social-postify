@@ -5,6 +5,7 @@ import { UpdateMediaDto } from "./dto/update-media.dto";
 
 @Injectable()
 export class MediasRepository {
+    
     constructor(private readonly prisma: PrismaService) { }
 
     createMedia(body: CreateMediaDto) {
@@ -18,7 +19,7 @@ export class MediasRepository {
     }
 
     findById(id: number) {
-        return this.prisma.medias.findMany({where: {id: id}});
+        return this.prisma.medias.findFirst({where: {id: id}});
     }
 
     updatedMedia(id: number, body: UpdateMediaDto) {
@@ -33,6 +34,15 @@ export class MediasRepository {
     removeMedia(id: number) {
         return this.prisma.medias.delete({where: {id: id}});
     }
+
+    findUsernameAndTitle(username: string, title: string) {
+        return this.prisma.medias.findFirst({
+            where: {
+                username,
+                title
+            }
+        })
+      }
 
 
 }

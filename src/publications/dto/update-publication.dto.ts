@@ -6,7 +6,7 @@ export class UpdatePublicationDto extends PartialType(CreatePublicationDto) {
 
     @IsNumber()
     @IsNotEmpty()
-    mediaId: number;
+    mediasId: number;
 
     @IsNumber()
     @IsNotEmpty()

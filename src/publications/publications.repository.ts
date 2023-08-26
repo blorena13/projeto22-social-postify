@@ -7,18 +7,18 @@ import { UpdatePublicationDto } from "./dto/update-publication.dto";
 export class PublicationsRepository{
     constructor(private readonly prisma: PrismaService){}
 
-    // createPubli(body: CreatePublicationDto) {
-    //     return this.prisma.publications.create({
-    //         data: body
-    //     });
-    //   }
+    createPubli(body: CreatePublicationDto) {
+        return this.prisma.publications.create({
+            data: body
+        });
+      }
 
     findAll() {
        return this.prisma.publications.findMany();
       }
 
     findById(id: number) {
-        return this.prisma.publications.findMany({where: {id}});
+        return this.prisma.publications.findFirst({where: {id}});
       }
 
     updatedPubli(id: number, body: UpdatePublicationDto) {
@@ -31,5 +31,15 @@ export class PublicationsRepository{
 
     removePubli(id: number) {
         return this.prisma.publications.delete({where: {id}});
-      }
+    }
+
+    findExistingMedia(mediasId: number) {
+      return this.prisma.medias.findFirst({where: {id: mediasId}});
+    }
+
+    findExistingPost(postId: number) {
+      return this.prisma.post.findFirst({where: {id: postId}});
+    }
+
+    
 }
