@@ -11,7 +11,7 @@ export class PublicationsRepository{
         return this.prisma.publications.create({
             data: body
         });
-      }
+    }
 
     findAll() {
        return this.prisma.publications.findMany();

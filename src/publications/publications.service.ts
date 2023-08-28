@@ -11,7 +11,6 @@ export class PublicationsService {
   
   async create(body: CreatePublicationDto) {
     if(!body.mediasId || !body.postId || !body.date){
-      console.log('entrou no erro')
       throw new BadRequestException();
     }
     const existingMediaId = await this.publicationsRepository.findExistingMedia(body.mediasId);

@@ -10,12 +10,15 @@ import { createPost } from "./factories/posts-factories"
 
 describe('publications test', () => {
     let app: INestApplication;
-    let prisma: PrismaService;
+    let prisma: PrismaService = new PrismaService();
 
     beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [AppModule, PrismaModule]
-    }).compile();
+    })
+    .overrideProvider(PrismaService)
+    .useValue(prisma)
+    .compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
@@ -30,24 +33,22 @@ describe('publications test', () => {
     });
 
     it('should post publication', async() => {
-        await createMedia(app, {title: "Instagram", username: "myusername"})
-
-        const media = await prisma.medias.findFirst({
-            where: {
+        const media = await prisma.medias.create({
+            data: {
                 title: "Instagram",
                 username: "myusername"
             }
-        });
-        await createPost(app, {title: "Instagram", text: "love u taylor swift <3"});
-        const post = await prisma.post.findFirst({
-            where: {
-            title: "Instagram",
-            text: "love u taylor swift <3"
-        }
         })
 
+        const post = await prisma.post.create({
+            data: {
+                title: "Instagram",
+                text: "love u taylor swift <3"
+            }
+        })
+        
         return request(app.getHttpServer())
-        .post('/publications')
+        .post("/publications")
         .send({
             mediasId: media.id,
             postId: post.id,
@@ -111,15 +112,15 @@ describe('publications test', () => {
         });
 
         const response = await request(app.getHttpServer()).get(`/publications/${publi.id}`);
-        expect(HttpStatus.OK);
+        expect(response.status).toBe(HttpStatus.OK);
     })
 
     it('should return 404 if id does not exists', async () => {
         const response = await request(app.getHttpServer()).get(`/publications/8`);
-        expect(HttpStatus.NOT_FOUND);
+        expect(response.status).toBe(HttpStatus.NOT_FOUND);
     })
 
-    it('should update puclication', async () => {
+    it('should update publication', async () => {
         await createMedia(app, {title: "Instagram", username: "myusername"});
 
         const media = await prisma.medias.findFirst({
@@ -160,7 +161,7 @@ describe('publications test', () => {
             postId: post2.id, 
             date: "2023-09-21T13:25:17.352Z"
         })
-        expect(HttpStatus.OK);
+        expect(response.status).toBe(HttpStatus.OK);
     });
 
     it('should delete publications', async () => {
@@ -191,7 +192,7 @@ describe('publications test', () => {
             }
         });
         const response = await request(app.getHttpServer()).delete(`/publications/${publi.id}`);
-        expect(HttpStatus.OK);
+        expect(response.status).toBe(HttpStatus.OK);
     })
 
 })
